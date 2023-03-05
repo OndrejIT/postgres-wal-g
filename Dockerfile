@@ -23,8 +23,7 @@ COPY docker-entrypoint.sh /usr/local/bin/
 ADD docker-entrypoint-initdb.d/* /docker-entrypoint-initdb.d/
 
 RUN \
-	apk add -U gcompat musl-locales tzdata && \
+	apk add --no-cache gcompat musl-locales tzdata && \
 	chmod +x /usr/local/bin/docker-entrypoint.sh && \
 	chmod +x /docker-entrypoint-initdb.d/* && \
-	chmod +x /usr/local/bin/wal-g /usr/local/bin/backup /usr/local/bin/restore && \
-	rm -rf /var/cache/apk/*
+	chmod +x /usr/local/bin/wal-g /usr/local/bin/backup /usr/local/bin/restore
