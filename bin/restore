@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+export PGDATA="${PGDATA:-/var/lib/postgresql/data/}"
+export PGUSER="${POSTGRES_USER:-postgres}"
+
+DATE=`date -Iseconds`
+NAME="${1:-LATEST}"
+RESTORE="/tmp/postgres"
+
+# copy config files to tmp dir
+if [ -f "${PGDATA}/pg_hba.conf" ]; then
+	mkdir -p ${RESTORE}
+	mv "${PGDATA}/pg_hba.conf" "${RESTORE}/"
+fi
+if [ -f "${PGDATA}/pg_ident.conf" ]; then
+	mkdir -p ${RESTORE}
+	mv "${PGDATA}/pg_ident.conf" "${RESTORE}/"
+fi
+if [ -f "${PGDATA}/postgresql.conf" ]; then
+	mkdir -p ${RESTORE}
+	mv "${PGDATA}/postgresql.conf" "${RESTORE}/"
+fi
+
+rm -rf ${PGDATA}/*
+
+/usr/local/bin/wal-g backup-fetch "${PGDATA}" "${NAME}"
+
+# create recovery.signal
+touch "${PGDATA}/recovery.signal"
+
+# copy back config files (if exist)
+if [ -d "${RESTORE}" ]; then
+	mv ${RESTORE}/* ${PGDATA}
+	rm -rf ${RESTORE}
+fi
+

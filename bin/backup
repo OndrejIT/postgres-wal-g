@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+export PGUSER="${POSTGRES_USER:-postgres}"
+
+SEGMENT="${1:-basebackup}"
+
+
+if [ "${WALG_PROFILE}" != "prod" ]; then
+	echo "Backup disabled in devel mode. Exiting.."
+
+	exit 1
+fi
+
+if [ "${SEGMENT}" == "basebackup" ]; then
+
+	/usr/local/bin/wal-g backup-push "${PGDATA}"
+
+else
+
+	/usr/local/bin/wal-g wal-push "${SEGMENT}"
+
+fi
