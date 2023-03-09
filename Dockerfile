@@ -1,4 +1,4 @@
-FROM golang:alpine3.17 AS builder
+FROM golang:1.20-alpine3.17 AS builder
 
 ENV WALG_VERSION=v2.0.1
 
@@ -20,7 +20,7 @@ COPY docker-entrypoint.sh /usr/local/bin/
 ADD docker-entrypoint-initdb.d/* /docker-entrypoint-initdb.d/
 
 RUN \
-	apk add --no-cache gcompat musl-locales tzdata && \
+	apk add --no-cache musl-locales tzdata && \
 	chmod +x /usr/local/bin/docker-entrypoint.sh && \
 	chmod +x /docker-entrypoint-initdb.d/* && \
 	chmod +x /usr/local/bin/wal-g /usr/local/bin/backup /usr/local/bin/restore
